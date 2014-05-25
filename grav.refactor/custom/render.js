@@ -1,4 +1,4 @@
-var focusBody=0;
+var focusBody=1;
 
 render.c0.width=window.innerWidth;
 render.c0.height=window.innerHeight;
@@ -48,6 +48,7 @@ function mapCenterDot(){
 	render[1].stroke();
 }
 
+mainScale=0.1;
 function redrawIdontLike(){
 	//render[0].setTransform(1,0,0,1,render.c1.width/2,render.c1.height/2);
 
@@ -56,17 +57,19 @@ function redrawIdontLike(){
 	render[0].clearRect(-window.innerWidth/2,-window.innerHeight/2,window.innerWidth,window.innerHeight);
 	forEach(bodies,function(b){
 		render[0].beginPath();
-		//render[1].arc(b.x-barycenter.x,b.y-barycenter.y,b.radius,0,Math.Tau);
-		render[0].arc(b.x-bodies[focusBody].x,b.y-bodies[focusBody].y,b.radius,0,Math.Tau);
+		var x=(b.x-bodies[focusBody].x)*mainScale;
+		var y=(b.y-bodies[focusBody].y)*mainScale;
+		render[0].arc(x,y,b.radius*mainScale,0,Math.Tau);
 		render[0].fillStyle=b.color;
 		render[0].fill();
 	});
 
 	//MAP
+	scale=0.1; //temp
 
 	render[1].clearRect(-render.c1.width/2,-render.c1.height/2,render.c1.width,render.c1.height);
 	//render[1].clearRect(0,0,render.c1.width,render.c1.height);
-	var scale=estimateScale();
+	//var scale=estimateScale(); //gonna do this just once
 	render[1].setTransform(scale,0,0,scale,render.c1.width/2,render.c1.height/2);
 
 	forEach(bodies,function(b){
@@ -91,8 +94,13 @@ function estimateScale(){
 		var D=b.x*b.x+b.y*b.y;
 		if (D>maxDistance) maxDistance=D;
 	});
-	return  0.4875 *  window.innerHeight / Math.sqrt(maxDistance);
+	var result=render.c1.width/Math.sqrt(maxDistance)/2;
+	console.log("estimateScale maxDistance: "+maxDistance);
+	console.log("estimateScale result: "+result+" (out of render.c1.width="+render.c1.width+")");
+	//return  0.4875 *  window.innerHeight / Math.sqrt(maxDistance);
 	//return 0.4 * render.c1.width/Math.sqrt(maxDistance);/**/
+	return result;
+	//return render.c1.width/Math.sqrt(maxDistance)/2; //width/maximum width possible/2
 
 	/*var maxDistance=0;
 	forEach(bodies,function(b){

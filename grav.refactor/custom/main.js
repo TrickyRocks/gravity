@@ -4,9 +4,20 @@ function initialize() {
 	//position minimap
 	render.c1.style.top=window.innerHeight-render.c1.height;
 	//create system
-	bodies=new randomSystem(20,20);
+	//bodies=new randomSystem(20,20);
+	bodies=[
+		new Body(6000,0,0,'yellow'),
+		new Body(300,6000*2*3.2,0,'green'),
+		new Body(140,6000*2*3.2,-300*3,'gray'),
+		new Body(800,6000*2*8.4,0,'orange')
+	];
+	//set orbits
+	physics.setOrbit(bodies[0],bodies[1]);
+	physics.setOrbit(bodies[1],bodies[2]);
+	physics.setOrbit(bodies[0],bodies[3]);
 	//start game loop
 	game=new Interval('loop();',timing);
+	scale=estimateScale();
 }
 
 function loop(){
